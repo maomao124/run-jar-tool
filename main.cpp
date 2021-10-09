@@ -551,7 +551,7 @@ int main()
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
 		cout << setw(20)<<"jar文件执行完毕！以下内容不属于jar文件" << endl;
-		ofstream out("run jar.log", ios::app);
+		ofstream out("C:\\tool.bat\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
 		out << "日期：";
@@ -615,7 +615,7 @@ int main()
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
 		cout << setw(20) << "jar文件执行完毕！以下内容不属于jar文件" << endl;
-		ofstream out("run jar.log", ios::app);
+		ofstream out("C:\\tool.bat\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
 		out << "日期：";
