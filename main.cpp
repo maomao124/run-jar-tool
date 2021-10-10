@@ -437,7 +437,7 @@ BOOL SetConsoleColor(WORD wAttributes)
 
 //**************************************************************//************************
 
-int main()
+int main(int args,char* argv[])
 {
 
 	//*************************************************************************
@@ -447,6 +447,7 @@ int main()
 	//*************************************************************************
 	
 	//*************************计时开始***************************************
+
 
 	//始终用此程序打开jar文件
 	//HWND hwnd;
@@ -523,25 +524,28 @@ int main()
 	printf("%s\n", ExeFile);
 	*/
 	SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-	cout << setw(40) << "jar文件启动器   by mao" << endl;
+	cout << setw(40) << "jar文件启动器2.0   by mao" << endl;
 	SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-	vector<string> files;
+	//vector<string> files;
 	char buffer[MAX_PATH];
 	getcwd(buffer, MAX_PATH);
 	cout <<left<< setw(30) << "  当前工作目录为：" << buffer << endl;
-	char* filePath = buffer;
+	//char* filePath = buffer;
 	string path = buffer;
-	getAllFiles(filePath, files,".jar");
-	char str[30];
-	int size = files.size();
-	if (size == 1)
+	//getAllFiles(filePath, files,".jar");
+	//char str[30];
+	//int size = files.size();
+	if (args == 2)
 	{
 		path = path + "\\";
-		solve(files[0], path);
+		string pathfile = argv[1];
+		//solve(files[0], path);
+		solve(pathfile, path);
 		cout << setw(30) << "  即将执行的jar文件的名称：";
-		cout << files[0].c_str() << endl;
+		//cout << files[0].c_str() << endl;
+		cout << pathfile << endl;
 		string strcmd = "java -jar ";
-		strcmd = strcmd + files[0];
+		strcmd = strcmd + pathfile;
 		cout << setw(2) <<"" << "开始执行！   执行内容如下：" << endl;
 		cout << "------------------------------------------------" << endl;
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);  //默认情况下控制台颜色是白色，所以用“RGB”组合
@@ -551,7 +555,7 @@ int main()
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
 		cout << setw(20)<<"jar文件执行完毕！以下内容不属于jar文件" << endl;
-		ofstream out("C:\\tool.bat\\run jar.log", ios::app);
+		ofstream out("C:\\jar文件启动器\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
 		out << "日期：";
@@ -559,19 +563,21 @@ int main()
 		out << "时间：";
 		out << setfill('0') << setw(2) << sys.wHour << ":" << setfill('0') << setw(2) << sys.wMinute << ":" << setfill('0') << setw(2) << sys.wSecond << "\t";
 		out << "启动的jar文件的路径：";
-		out << path << files[0] << endl;
+		out << path << argv[1] << endl;
 		out.close();
 	}
 
-	else if (size > 1)
+	else if (args > 2)
 	{
 		path = path + "\\";
-		cout << "  当前文件路径下包含多个jar文件，请选择要运行的文件" << endl;
+		cout << "  调用了多个jar文件，请选择要运行的文件" << endl;
 		cout << "-------------------------------" << endl;
-		for (int i = 0;i < size;i++)
+		string s2;
+		for (int i = 0;i < args-1;i++)
 		{
-			solve(files[i], path);
-			cout << right << setw(4) << i+1 << ". " << files[i] << endl;
+			s2 = argv[i + 1];
+			solve(s2, path);
+			cout << right << setw(4) << i+1 << ". " << s2 << endl;
 		}
 		cout << "-------------------------------" << endl;
 		cout << "  请输入序号：";
@@ -599,13 +605,16 @@ int main()
 				goto loop;
 			}
 		}
-		if (a <=0 || a > size)
+		if (a <=0 || a > (args-1))
 		{
 			cout << "输入的数据不在范围内，请重新输入！！！" << endl;
 			goto loop;
 		}
 		string strcmd = "java -jar ";
-		strcmd = strcmd + files[a-1];
+		//strcmd = strcmd + files[a-1];
+		string s3 = argv[a];
+		solve(s3, path);
+		strcmd = strcmd + s3;
 		cout << setw(2) << "" << "开始执行！   执行内容如下：" << endl;
 		cout << "------------------------------------------------" << endl;
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);  //默认情况下控制台颜色是白色，所以用“RGB”组合
@@ -615,7 +624,7 @@ int main()
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
 		cout << setw(20) << "jar文件执行完毕！以下内容不属于jar文件" << endl;
-		ofstream out("C:\\tool.bat\\run jar.log", ios::app);
+		ofstream out("C:\\jar文件启动器\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
 		out << "日期：";
@@ -623,15 +632,16 @@ int main()
 		out << "时间：";
 		out << setfill('0') << setw(2) << sys.wHour << ":" << setfill('0') << setw(2) << sys.wMinute << ":" << setfill('0') << setw(2) << sys.wSecond << "\t";
 		out << "启动的jar文件的路径：";
-		out << path << files[0] << endl;
+		out << path << argv[a] << endl;
 		out.close();
 	}
 
-	else if (size == 0)
+	else if (args == 1)
 	{
 		runstart();
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-		cout << "  异常，未找到jar文件！！！\a" << endl;
+		cout << "  异常，未找到jar文件！！！   请通过jar文件调用此程序\a" << endl;
+		cout << "  选中要运行的jar文件，右键，打开方式，选择始终使用此程序打开jar文件" << endl;
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	}
 
