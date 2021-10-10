@@ -25,7 +25,7 @@
 #include <thread>                                           //多线程
 #include"resource1.h"
 //vs2019自定义控制台代码模板 by mao
-//作者QQ1296193245
+ //作者QQ1296193245
 using namespace std;
 #pragma warning(disable : 4996)
 #pragma comment (lib,"ddraw.lib")
@@ -437,7 +437,7 @@ BOOL SetConsoleColor(WORD wAttributes)
 
 //**************************************************************//************************
 
-int main(int args,char* argv[])
+int main(int args, char* argv[])
 {
 
 	//*************************************************************************
@@ -445,7 +445,7 @@ int main(int args,char* argv[])
 
 
 	//*************************************************************************
-	
+
 	//*************************计时开始***************************************
 
 
@@ -505,7 +505,7 @@ int main(int args,char* argv[])
 		//WCHAR runpath[_MAX_PATH];
 		//::GetTempPath(_MAX_PATH,runpath);
 		string s;
-		
+
 		char path[_MAX_PATH];
 		getcwd(path, MAX_PATH);
 		cout << path;
@@ -523,13 +523,16 @@ int main(int args,char* argv[])
 	printf("当前文件路径为：\n");
 	printf("%s\n", ExeFile);
 	*/
+
+	bool ishide = false;
+
 	SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-	cout << setw(40) << "jar文件启动器2.0   by mao" << endl;
+	cout << setw(40) << "jar文件启动器2.1   by mao" << endl;
 	SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	//vector<string> files;
 	char buffer[MAX_PATH];
 	getcwd(buffer, MAX_PATH);
-	cout <<left<< setw(30) << "  当前工作目录为：" << buffer << endl;
+	cout << left << setw(30) << "  当前工作目录为：" << buffer << endl;
 	//char* filePath = buffer;
 	string path = buffer;
 	//getAllFiles(filePath, files,".jar");
@@ -541,20 +544,41 @@ int main(int args,char* argv[])
 		string pathfile = argv[1];
 		//solve(files[0], path);
 		solve(pathfile, path);
+		if (pathfile.find(".jar") >= pathfile.length())
+		{
+			SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
+			cout << "文件后缀名不正确\a！！！    正确的后缀名应为.jar" << endl;
+			cout << "按任意键退出程序......." << endl;
+			_getch();
+			exit(0);
+		}
+		if (pathfile.find("_hide") < pathfile.length() - 3)
+		{
+			ishide = true;
+			HWND hwnd;
+			if (hwnd = ::FindWindow(L"ConsoleWindowClass", NULL)) //找到控制台句柄
+			{
+				::ShowWindow(hwnd, SW_HIDE); //隐藏控制台窗口
+			}
+		}
+
 		cout << setw(30) << "  即将执行的jar文件的名称：";
 		//cout << files[0].c_str() << endl;
 		cout << pathfile << endl;
 		string strcmd = "java -jar ";
 		strcmd = strcmd + pathfile;
-		cout << setw(2) <<"" << "开始执行！   执行内容如下：" << endl;
+		cout << setw(2) << "" << "开始执行！   执行内容如下：" << endl;
 		cout << "------------------------------------------------" << endl;
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);  //默认情况下控制台颜色是白色，所以用“RGB”组合
-		runstart();
+		if (ishide == 0)
+		{
+			runstart();
+		}
 		system(strcmd.c_str());
 		cout << endl;
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
-		cout << setw(20)<<"jar文件执行完毕！以下内容不属于jar文件" << endl;
+		cout << setw(20) << "jar文件执行完毕！以下内容不属于jar文件" << endl;
 		ofstream out("C:\\jar文件启动器\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
@@ -563,7 +587,7 @@ int main(int args,char* argv[])
 		out << "时间：";
 		out << setfill('0') << setw(2) << sys.wHour << ":" << setfill('0') << setw(2) << sys.wMinute << ":" << setfill('0') << setw(2) << sys.wSecond << "\t";
 		out << "启动的jar文件的路径：";
-		out << path << argv[1] << endl;
+		out << argv[1] << endl;
 		out.close();
 	}
 
@@ -573,11 +597,11 @@ int main(int args,char* argv[])
 		cout << "  调用了多个jar文件，请选择要运行的文件" << endl;
 		cout << "-------------------------------" << endl;
 		string s2;
-		for (int i = 0;i < args-1;i++)
+		for (int i = 0;i < args - 1;i++)
 		{
 			s2 = argv[i + 1];
 			solve(s2, path);
-			cout << right << setw(4) << i+1 << ". " << s2 << endl;
+			cout << right << setw(4) << i + 1 << ". " << s2 << endl;
 		}
 		cout << "-------------------------------" << endl;
 		cout << "  请输入序号：";
@@ -605,7 +629,7 @@ int main(int args,char* argv[])
 				goto loop;
 			}
 		}
-		if (a <=0 || a > (args-1))
+		if (a <= 0 || a > (args - 1))
 		{
 			cout << "输入的数据不在范围内，请重新输入！！！" << endl;
 			goto loop;
@@ -614,11 +638,33 @@ int main(int args,char* argv[])
 		//strcmd = strcmd + files[a-1];
 		string s3 = argv[a];
 		solve(s3, path);
+		if (s3.find(".jar") >= s3.length())
+		{
+			SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
+			cout << "文件后缀名不正确\a！！！    正确的后缀名应为.jar" << endl;
+			cout << "按任意键退出程序......." << endl;
+			_getch();
+			exit(0);
+		}
+
+		if (s3.find("_hide") < s3.length() - 3)
+		{
+			ishide = true;
+			HWND hwnd;
+			if (hwnd = ::FindWindow(L"ConsoleWindowClass", NULL)) //找到控制台句柄
+			{
+				::ShowWindow(hwnd, SW_HIDE); //隐藏控制台窗口
+			}
+		}
+
 		strcmd = strcmd + s3;
 		cout << setw(2) << "" << "开始执行！   执行内容如下：" << endl;
 		cout << "------------------------------------------------" << endl;
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);  //默认情况下控制台颜色是白色，所以用“RGB”组合
-		runstart();
+		if (ishide == 0)
+		{
+			runstart();
+		}
 		system(strcmd.c_str());
 		cout << endl;
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -632,7 +678,7 @@ int main(int args,char* argv[])
 		out << "时间：";
 		out << setfill('0') << setw(2) << sys.wHour << ":" << setfill('0') << setw(2) << sys.wMinute << ":" << setfill('0') << setw(2) << sys.wSecond << "\t";
 		out << "启动的jar文件的路径：";
-		out << path << argv[a] << endl;
+		out << argv[a] << endl;
 		out.close();
 	}
 
@@ -642,20 +688,29 @@ int main(int args,char* argv[])
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
 		cout << "  异常，未找到jar文件！！！   请通过jar文件调用此程序\a" << endl;
 		cout << "  选中要运行的jar文件，右键，打开方式，选择始终使用此程序打开jar文件" << endl;
+		cout << "  提示：当jar的文件名称包含 \"_hide\" 关键字时，用此程序启动jar文件时将会自动隐藏控制台" << endl;
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	}
 
 	//*************************计时结束***************************************
-	runend();
+
+	
+
+	if (ishide == 0)
+	{
+		runend();
+		system("pause");
+		rundisplay();                                                                   //计时结果显示
+		_getch();
+	}
+	
 
 
-	system("pause");
-
-
-
-
-	rundisplay();                                                                   //计时结果显示
-	_getch();
+	//if (ishide == 1)
+	//{
+	//	Beep(900, 300);
+	//}
+	
 	//closegraph();
 	// system("pause");
 	//Sleep(10000);
