@@ -579,7 +579,7 @@ int main(int args, char* argv[])
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
 		cout << setw(20) << "jar文件执行完毕！以下内容不属于jar文件" << endl;
-		ofstream out("C:\\jar文件启动器\\run jar.log", ios::app);
+		ofstream out("C:\\tools\\jar文件启动器\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
 		out << "日期：";
@@ -670,7 +670,7 @@ int main(int args, char* argv[])
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		cout << "------------------------------------------------" << endl;
 		cout << setw(20) << "jar文件执行完毕！以下内容不属于jar文件" << endl;
-		ofstream out("C:\\jar文件启动器\\run jar.log", ios::app);
+		ofstream out("C:\\tools\\jar文件启动器\\run jar.log", ios::app);
 		SYSTEMTIME sys;                                    //获取系统时间
 		GetLocalTime(&sys);
 		out << "日期：";
@@ -688,8 +688,36 @@ int main(int args, char* argv[])
 		SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
 		cout << "  异常，未找到jar文件！！！   请通过jar文件调用此程序\a" << endl;
 		cout << "  选中要运行的jar文件，右键，打开方式，选择始终使用此程序打开jar文件" << endl;
+		cout << "  使用此程序前需要配置java环境变量" << endl;
 		cout << "  提示：当jar的文件名称包含 \"_hide\" 关键字时，用此程序启动jar文件时将会自动隐藏控制台" << endl;
 		SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		cout << "  按tab键查看日志，或者按其它键退出" << endl;
+		char ch;
+		ch = _getch();
+		if (ch==9)
+		{
+			ifstream log("C:\\tools\\jar文件启动器\\run jar.log", ios::in);
+			{
+				if (!log)
+				{
+					SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
+					cout << "没有找到日志文件！！！" << endl;
+					SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+				}
+				else
+				{
+					string strlog;
+					long totallog = 0;
+					while (!log.eof())
+					{
+						getline(log, strlog);
+						cout << strlog << endl;
+						totallog++;
+					}
+					cout << "一共" << totallog << "项" << endl;
+				}
+			}
+		}
 	}
 
 	//*************************计时结束***************************************
