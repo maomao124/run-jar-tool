@@ -694,8 +694,21 @@ int main(int args, char* argv[])
 		cout << "  按tab键查看日志，或者按其它键退出" << endl;
 		char ch;
 		ch = _getch();
+		string strlog;
+		long totallog = 0;
 		if (ch==9)
 		{
+			string pass;
+			cout << "请输入密码：";
+			cin >> pass;
+			if (pass!="123")
+			{
+				SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
+				cout<<"密码错误！！！"<<endl;
+				SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+			}
+			else
+			{ 
 			ifstream log("C:\\tools\\jar文件启动器\\run jar.log", ios::in);
 			{
 				if (!log)
@@ -706,8 +719,7 @@ int main(int args, char* argv[])
 				}
 				else
 				{
-					string strlog;
-					long totallog = 0;
+
 					while (!log.eof())
 					{
 						getline(log, strlog);
@@ -717,6 +729,8 @@ int main(int args, char* argv[])
 					cout << "一共" << totallog << "项" << endl;
 				}
 			}
+			}
+			
 		}
 	}
 
